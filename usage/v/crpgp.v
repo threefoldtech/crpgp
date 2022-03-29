@@ -59,6 +59,8 @@ fn C.params_builder_build(&C.SecretKeyParamsBuilder) &C.SecretKeyParams
 fn C.params_builder_free(&C.SecretKeyParamsBuilder) char
 fn C.signature_serialize(&C.Signature, &u64) &u8
 fn C.signature_deserialize(&u8, u64) &C.Signature
+fn C.signature_to_armored(&C.Signature, &u64) &char
+fn C.signature_from_armored(&char) &C.Signature
 fn C.signature_free(&C.Signature) char
 fn C.signed_public_key_verify(&C.SignedPublicKey, &u8, u64, &C.Signature) char
 fn C.signed_public_key_encrypt(&C.SignedPublicKey, &u8, &u64) &u8

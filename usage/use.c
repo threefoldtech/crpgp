@@ -37,8 +37,9 @@ int main() {
     size_t len = sizeof(data);
     struct Signature *sig = signed_secret_key_create_signature(signed_sk, data, len);
     size_t sig_len;
-    uint8_t *serialized = signature_serialize(sig, &sig_len);
-    struct Signature *deserialized = signature_deserialize(serialized, sig_len);
+    char *serialized = signature_to_armored(sig, &sig_len);
+    printf("signature armored string:\n%s\n\n", serialized);
+    struct Signature *deserialized = signature_from_armored(serialized, sig_len);
     if (signed_public_key_verify(spk, data, len, deserialized) == 0) {
         puts("success");
     } else {
@@ -66,7 +67,7 @@ int main() {
     signed_secret_key_free(signed_sk);
     signed_public_key_free(spk);
     signature_free(deserialized);
-    ptr_free(serialized);
+    ptr_free((uint8_t*)serialized);
     ptr_free(encrypted);
     ptr_free(decrypted);
 }

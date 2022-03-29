@@ -139,7 +139,6 @@ fn signed_secret_key_from_armored(s string) ?SignedSecretKey {
 	}
 }
 
-
 fn (s &Signature) serialize() ?[]byte {
 	len := u64(0)
 	ser := C.signature_serialize(s.internal, &len)
@@ -152,9 +151,32 @@ fn (s &Signature) serialize() ?[]byte {
 	return res
 }
 
+fn (s &Signature) to_armored() ?string {
+	len := u64(0)
+	ser := C.signature_to_armored(s.internal, &len)
+	if u64(ser) == 0 {
+		construct_error()?
+		return error("")
+	}
+	res := unsafe { cstring_to_vstring(ser) } 
+	C.ptr_free(&u8(ser))
+	return res
+}
+
 fn deserialize_signature(bytes []byte) ?Signature {
 	// TODO: is the pointer arith here ok?
 	sig := C.signature_deserialize(&u8(&bytes[0]), bytes.len)
+	if u64(sig) == 0 {
+		construct_error()?
+		return error("")
+	}
+	return Signature {
+		internal: sig
+	}
+}
+
+fn signature_from_armored(s string) ?Signature {
+	sig := C.signature_from_armored(s.str)
 	if u64(sig) == 0 {
 		construct_error()?
 		return error("")

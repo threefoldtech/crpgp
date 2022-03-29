@@ -2,6 +2,16 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
+struct SecretKeyParamsBuilder;
+struct SecretKeyParams;
+struct SignedSecretKey;
+struct SecretKey;
+struct PublicKey;
+struct Signature;
+struct SignedPublicKey;
+struct SignedPublicSubKey;
+struct SubkeyParams;
+struct SubkeyParamsBuilder;
 
 typedef enum KeyType_Tag {
   /**
@@ -40,85 +50,89 @@ int last_error_length(void);
  */
 int error_message(char *buffer, int length);
 
-char public_key_verify(PublicKey *public_key, uint8_t *data, size_t data_len, Signature *signature);
+char public_key_verify(struct PublicKey *public_key, uint8_t *data, size_t data_len, struct Signature *signature);
 
-uint8_t *public_key_encrypt(PublicKey *public_key, uint8_t *data, size_t *len);
+uint8_t *public_key_encrypt(struct PublicKey *public_key, uint8_t *data, size_t *len);
 
-SignedPublicKey *public_key_sign_and_free(PublicKey *public_key, SignedSecretKey *secret_key);
+struct SignedPublicKey *public_key_sign_and_free(struct PublicKey *public_key, struct SignedSecretKey *secret_key);
 
-char public_key_free(PublicKey *public_key);
+char public_key_free(struct PublicKey *public_key);
 
-SignedSecretKey *secret_key_sign(SecretKey *secret_key);
+struct SignedSecretKey *secret_key_sign(struct SecretKey *secret_key);
 
-char secret_key_free(SecretKey *secret_key);
+char secret_key_free(struct SecretKey *secret_key);
 
-SecretKey *params_generate_secret_key_and_free(SecretKeyParams *params);
+struct SecretKey *params_generate_secret_key_and_free(struct SecretKeyParams *params);
 
-SecretKeyParamsBuilder *params_builder_new(void);
+struct SecretKeyParamsBuilder *params_builder_new(void);
 
-char params_builder_primary_user_id(SecretKeyParamsBuilder *builder, char *primary_user_id);
+char params_builder_primary_user_id(struct SecretKeyParamsBuilder *builder, char *primary_user_id);
 
-char params_builder_key_type(SecretKeyParamsBuilder *builder, struct KeyType key_type);
+char params_builder_key_type(struct SecretKeyParamsBuilder *builder, struct KeyType key_type);
 
-char params_builder_subkey(SecretKeyParamsBuilder *builder, SubkeyParams *subkey);
+char params_builder_subkey(struct SecretKeyParamsBuilder *builder, struct SubkeyParams *subkey);
 
-SecretKeyParams *params_builder_build(SecretKeyParamsBuilder *builder);
+struct SecretKeyParams *params_builder_build(struct SecretKeyParamsBuilder *builder);
 
-char params_builder_free(SecretKeyParamsBuilder *builder);
+char params_builder_free(struct SecretKeyParamsBuilder *builder);
 
-uint8_t *signature_serialize(Signature *signature, size_t *output_len);
+uint8_t *signature_serialize(struct Signature *signature, size_t *output_len);
 
-Signature *signature_deserialize(uint8_t *signature_bytes, size_t len);
+struct Signature *signature_deserialize(uint8_t *signature_bytes, size_t len);
 
-char signature_free(Signature *signature);
+char *signature_to_armored(struct Signature *signature, size_t *output_len);
 
-char signed_public_key_verify(SignedPublicKey *signed_public_key,
+struct Signature *signature_from_armored(char *signature_bytes);
+
+char signature_free(struct Signature *signature);
+
+char signed_public_key_verify(struct SignedPublicKey *signed_public_key,
                               uint8_t *data,
                               size_t data_len,
-                              Signature *signature);
+                              struct Signature *signature);
 
-uint8_t *signed_public_key_encrypt(SignedPublicKey *signed_public_key, uint8_t *data, size_t *len);
+uint8_t *signed_public_key_encrypt(struct SignedPublicKey *signed_public_key, uint8_t *data, size_t *len);
 
-uint8_t *signed_public_key_encrypt_with_any(SignedPublicKey *signed_public_key,
+uint8_t *signed_public_key_encrypt_with_any(struct SignedPublicKey *signed_public_key,
                                             uint8_t *data,
                                             size_t *len);
 
-uint8_t *signed_public_key_to_bytes(SignedPublicKey *signed_public_key, size_t *len);
+uint8_t *signed_public_key_to_bytes(struct SignedPublicKey *signed_public_key, size_t *len);
 
-SignedPublicKey *signed_public_key_from_bytes(uint8_t *bytes, size_t len);
+struct SignedPublicKey *signed_public_key_from_bytes(uint8_t *bytes, size_t len);
 
-char *signed_public_key_to_armored(SignedPublicKey *signed_public_key);
+char *signed_public_key_to_armored(struct SignedPublicKey *signed_public_key);
 
-SignedPublicKey *signed_public_key_from_armored(char *s);
+struct SignedPublicKey *signed_public_key_from_armored(char *s);
 
-char signed_public_key_free(SignedPublicKey *public_key);
+char signed_public_key_free(struct SignedPublicKey *public_key);
 
-PublicKey *signed_secret_key_public_key(SignedSecretKey *signed_secret_key);
+struct PublicKey *signed_secret_key_public_key(struct SignedSecretKey *signed_secret_key);
 
-Signature *signed_secret_key_create_signature(SignedSecretKey *signed_secret_key,
+struct Signature *signed_secret_key_create_signature(struct SignedSecretKey *signed_secret_key,
                                               uint8_t *data,
                                               size_t len);
 
-uint8_t *signed_secret_key_decrypt(SignedSecretKey *secret_key, uint8_t *encrypted, size_t *len);
+uint8_t *signed_secret_key_decrypt(struct SignedSecretKey *secret_key, uint8_t *encrypted, size_t *len);
 
-char signed_secret_key_free(SignedSecretKey *signed_secret_key);
+char signed_secret_key_free(struct SignedSecretKey *signed_secret_key);
 
-uint8_t *signed_secret_key_to_bytes(SignedSecretKey *signed_secret_key, size_t *len);
+uint8_t *signed_secret_key_to_bytes(struct SignedSecretKey *signed_secret_key, size_t *len);
 
-SignedSecretKey *signed_secret_key_from_bytes(uint8_t *bytes, size_t len);
+struct SignedSecretKey *signed_secret_key_from_bytes(uint8_t *bytes, size_t len);
 
-char *signed_secret_key_to_armored(SignedSecretKey *signed_secret_key);
+char *signed_secret_key_to_armored(struct SignedSecretKey *signed_secret_key);
 
-SignedSecretKey *signed_secret_key_from_armored(char *s);
+struct SignedSecretKey *signed_secret_key_from_armored(char *s);
 
-char subkey_params_free(SubkeyParams *subkey_params);
+char subkey_params_free(struct SubkeyParams *subkey_params);
 
-SubkeyParamsBuilder *subkey_params_builder_new(void);
+struct SubkeyParamsBuilder *subkey_params_builder_new(void);
 
-char subkey_params_builder_key_type(SubkeyParamsBuilder *builder, struct KeyType key_type);
+char subkey_params_builder_key_type(struct SubkeyParamsBuilder *builder, struct KeyType key_type);
 
-char subkey_params_builder_free(SubkeyParamsBuilder *builder);
+char subkey_params_builder_free(struct SubkeyParamsBuilder *builder);
 
-SubkeyParams *subkey_params_builder_build(SubkeyParamsBuilder *builder);
+struct SubkeyParams *subkey_params_builder_build(struct SubkeyParamsBuilder *builder);
 
 char ptr_free(uint8_t *ptr);

@@ -73,7 +73,7 @@ pub extern "C" fn public_key_encrypt(
     }
     let public_key = unsafe { &*public_key };
 
-    let data = vec_from_ptr(data, unsafe { *len });
+    let data = ptr_to_vec(data, unsafe { *len });
     let msg = Message::new_literal_bytes("", data.as_slice());
     let compressed = msg.compress(CompressionAlgorithm::ZLIB);
     if let Err(e) = compressed {

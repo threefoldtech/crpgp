@@ -27,7 +27,7 @@ pub fn encrypt(
         return ptr::null_mut();
     }
 
-    let data = vec_from_ptr(data, unsafe { *len });
+    let data = ptr_to_vec(data, unsafe { *len });
     let msg = Message::new_literal_bytes("", data.as_slice());
     let compressed = msg.compress(CompressionAlgorithm::ZLIB);
     if let Err(e) = compressed {

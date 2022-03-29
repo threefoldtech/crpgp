@@ -128,7 +128,7 @@ pub extern "C" fn signed_public_key_from_bytes(bytes: *mut u8, len: size_t) -> *
         update_last_error(Box::new("bytes can't be null".into()));
         return ptr::null_mut();
     }
-    let vec = vec_from_ptr(bytes, len);
+    let vec = ptr_to_vec(bytes, len);
     let sk = pgp::SignedPublicKey::from_bytes(vec.as_slice());
     if let Err(e) = sk {
         update_last_error(Box::new(e.to_string()));

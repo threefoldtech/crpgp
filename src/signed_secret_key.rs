@@ -96,7 +96,7 @@ pub extern "C" fn signed_secret_key_decrypt(
     }
     let secret_key = unsafe { &*secret_key };
 
-    let data = vec_from_ptr(encrypted, unsafe { *len });
+    let data = ptr_to_vec(encrypted, unsafe { *len });
     let msg = Message::from_bytes(data.as_slice());
     if let Err(e) = msg {
         update_last_error(e.to_string());
@@ -194,7 +194,7 @@ pub extern "C" fn signed_secret_key_from_bytes(bytes: *mut u8, len: size_t) -> *
         update_last_error(Box::new("bytes can't be null".into()));
         return ptr::null_mut();
     }
-    let vec = vec_from_ptr(bytes, len);
+    let vec = ptr_to_vec(bytes, len);
     let sk = pgp::SignedSecretKey::from_bytes(vec.as_slice());
     if let Err(e) = sk {
         update_last_error(Box::new(e.to_string()));
